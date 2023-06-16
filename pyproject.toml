@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "health-insurance"
+version = "0.1.0"
+description = "Samskriti Health Insurance"
+authors = ["Dilip Kumar Sharma <diliplakshya@gmail.com>"]
+readme = "README.md"
+packages = [{include = "health_insurance"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[tool.poetry.group.core.dependencies]
+fastapi = "^0.97.0"
+uvicorn = "^0.22.0"
+sqlalchemy = "^2.0.16"
+python-dotenv = "^1.0.0"
+email-validator = "^2.0.0.post2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
