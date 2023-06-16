@@ -14,13 +14,12 @@ class UserBase(BaseModel):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         
         return email_address
-
-
+   
 class UserCreate(UserBase):
     password: str
 
 class UserRead(UserCreate):
     id: int
-
+    
     class Config:
         orm_mode = True
