@@ -16,5 +16,7 @@ def create(
     user: Annotated[UserBase, Body()],
     db: Session = Depends(get_db)
 ) -> UserRead:
-    return UserService.create_user(user, db)
+    user = UserService.create_user(user, db)
+    UserService.send_email(user)
+    return user
     

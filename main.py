@@ -16,3 +16,4 @@ app.add_exception_handler(AuthException, auth_exception_handler)
 
 app.include_router(user_router)
 app.include_router(auth_router)
+

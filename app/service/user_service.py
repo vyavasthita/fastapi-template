@@ -4,6 +4,7 @@ from app.db import dao
 from app.errors.db_error import DBException
 from app.utils.password_helper import PasswordGenerator, PasswordHash
 from app.config.config import settings
+from app.utils.init_celery import celery
 
 
 class UserService:
@@ -22,3 +23,18 @@ class UserService:
             raise DBException(f"Failed to create user with email {user.email}")
         
         return new_user
+
+    @classmethod
+    def send_email(user: UserRead):
+        subject = 'Please verify your email'
+        body = f"Thanks for registration.\n Your password is -> {user.password}"
+
+        celery.send_task(
+            'email.send', (
+                settings.MAIL_SENDER_NAME,
+                settings.MAIL_SENDER_EMAIL,
+                user.email, 
+                subject, 
+                body
+            )
+        )

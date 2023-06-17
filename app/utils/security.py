@@ -1,4 +1,3 @@
-from typing import Union
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from app.errors.auth_error import AuthException
