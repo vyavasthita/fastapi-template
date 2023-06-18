@@ -29,7 +29,9 @@ class Profile(Base):
     last_name = Column(String(30), nullable=False)
     age = Column(Integer)
 
-    userprofile_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
+    userprofile_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     user = relationship("User", back_populates="profile")
 
     def __init__(self, first_name: str, last_name: str, age: int, user: User) -> None:

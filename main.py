@@ -4,7 +4,10 @@ from app.routers.auth_router import auth_router
 from app.routers.user_router import user_router
 from app.errors.db_error import DBException, db_exception_handler
 from app.errors.auth_error import AuthException, auth_exception_handler
-from app.errors.user_error import UserValidationException, user_validation_exception_handler
+from app.errors.user_error import (
+    UserValidationException,
+    user_validation_exception_handler,
+)
 from app.dependencies.config_dependency import get_settings
 from fastapi.middleware.cors import CORSMiddleware
 

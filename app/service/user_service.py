@@ -39,7 +39,7 @@ class UserService:
     def delete_user(cls, user: User, db: Session) -> None:
         dao.delete_user_by_id(user, db)
         cls.send_delete_account_email(user)
-    
+
     @classmethod
     def update_profile_info(
         cls,
