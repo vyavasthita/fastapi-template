@@ -8,13 +8,12 @@ from app.dependencies.auth_dependency import (
     ValidateDuplicateUser,
     ValidatePassword,
     ValidatePasswordReset,
+    ValidateDeleteAccount,
 )
 from app.schemas.user_schema import (
-    UserBase,
     UserRead,
     UserProfileUpdate,
     UserProfileUpdateRead,
-    UserProfilePasswordUpdate,
 )
 from app.service.user_service import UserService
 from app.service.auth_service import AuthService
@@ -24,12 +23,20 @@ from app.models.models import User
 user_router = APIRouter(prefix="/api")
 
 
-@user_router.post("/users", tags=["register"], response_model=UserRead)
+@user_router.post("/users", tags=["user"], response_model=UserRead)
 def create(
     user: Annotated[dict, Depends(ValidateDuplicateUser())],
     db: Session = Depends(get_db),
 ) -> UserRead:
     return UserService.create_user(user, db)
+
+
+@user_router.delete("/users", tags=["user"], status_code=status.HTTP_204_NO_CONTENT)
+def delete(
+    user: Annotated[dict, Depends(ValidateDeleteAccount())],
+    db: Session = Depends(get_db),
+) -> None:
+    return UserService.delete_user(user, db)
 
 
 @user_router.put(
@@ -64,9 +71,7 @@ def reset_password(
     user: Annotated[dict, Depends(ValidatePasswordReset())],
     db: Session = Depends(get_db),
 ) -> None:
-    return UserService.reset_password(
-        user, db
-    )
+    return UserService.reset_password(user, db)
 
 
 @user_router.get("/users/me", tags=["profile"], response_model=UserRead)

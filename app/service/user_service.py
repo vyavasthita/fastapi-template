@@ -36,6 +36,11 @@ class UserService:
         return new_user
 
     @classmethod
+    def delete_user(cls, user: User, db: Session) -> None:
+        dao.delete_user_by_id(user, db)
+        cls.send_delete_account_email(user)
+    
+    @classmethod
     def update_profile_info(
         cls,
         current_user: User,
@@ -102,6 +107,24 @@ class UserService:
         body = f"As per your request.\nYour new password is -> {user.password}"
 
         print("Sending Password Reset Email")
+        celery.send_task(
+            "email.send",
+            (
+                get_settings().MAIL_SENDER_NAME,
+                get_settings().MAIL_SENDER_EMAIL,
+                "User",
+                user.email,
+                subject,
+                body,
+            ),
+        )
+
+    @classmethod
+    def send_delete_account_email(cls, user: User):
+        subject = "Account Deletion"
+        body = f"As per your request your account has been deleted."
+
+        print("Sending Account Deleted Email")
         celery.send_task(
             "email.send",
             (

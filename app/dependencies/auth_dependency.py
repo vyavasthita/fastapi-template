@@ -81,3 +81,13 @@ class ValidatePasswordReset:
     ):
         ApiLogger.log_info(f"Verifying user with email '{user.email}'.")
         return AuthService.verify_user(email=user.email, db=db)
+
+
+class ValidateDeleteAccount:
+    def __call__(
+        self,
+        token: Annotated[str, Depends(get_auth_schema())],
+        db: Annotated[Session, Depends(get_db)],
+    ):
+        ApiLogger.log_info("Verifying token.")
+        return AuthService.get_current_user(token=token, db=db)

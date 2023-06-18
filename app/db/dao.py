@@ -11,6 +11,11 @@ def create_user(user: UserCreate, db: Session) -> User:
     return new_user
 
 
+def delete_user_by_id(user: User, db: Session) -> User:
+    db.query(User).filter_by(id=user.id).delete()
+    db.commit()
+
+
 def get_user_by_email(email: str, db: Session) -> User:
     return db.query(User).filter_by(email=email).first()
 
@@ -37,6 +42,7 @@ def update_user_profile(
     db.commit()
     db.refresh(profile)
     return user
+
 
 def update_user_password(
     user: User, password: str, db: Session
