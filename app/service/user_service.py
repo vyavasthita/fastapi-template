@@ -13,6 +13,7 @@ from app.utils.password_helper import PasswordGenerator, PasswordHash
 from app.utils.init_celery import celery
 from app.dependencies.config_dependency import get_settings
 from app.models.models import User
+from app.logging.api_logger import ApiLogger
 
 
 class UserService:
@@ -20,7 +21,7 @@ class UserService:
     def create_user(cls, user: UserBase, db: Session) -> UserRead:
         response = PasswordGenerator().generate_password(get_settings().PASSWORD_LENGTH)
 
-        print(f"*** Password -> {response.result}")
+        ApiLogger.get_instance().log_info(f"*** Password -> {response.result}")
 
         hashed_password = PasswordHash.gen_hash_password(response.result)
 
@@ -29,6 +30,8 @@ class UserService:
 
         if not new_user:
             raise DBException(f"Failed to create user with email {user.email}")
+
+        cls.send_user_registration_email(user=new_user)
 
         return new_user
 
@@ -53,19 +56,58 @@ class UserService:
         password: str,
         db: Session,
     ) -> None:
-        dao.update_user_password(current_user, password, db)
+        hashed_password = PasswordHash.gen_hash_password(password)
+        dao.update_user_password(current_user, hashed_password, db)
 
     @classmethod
-    def send_email(cls, user: UserRead):
-        subject = "Please verify your email"
-        body = f"Thanks for registration.\n Your password is -> {user.password}"
+    def reset_password(
+        cls,
+        user: User,
+        db: Session,
+    ) -> None:
+        response = PasswordGenerator().generate_password(get_settings().PASSWORD_LENGTH)
 
-        print("Sending Celery Tasks")
+        ApiLogger.get_instance().log_info(f"*** Password -> {response.result}")
+
+        hashed_password = PasswordHash.gen_hash_password(response.result)
+
+        dao.update_user_password(user, hashed_password, db)
+
+        cls.send_reset_password_email(user=user)
+
+    @classmethod
+    def send_user_registration_email(cls, user: User):
+        subject = "Please verify your email"
+        body = f"Thanks for registration.\nYour password is -> {user.password}"
+
+        ApiLogger.get_instance().log_info(
+            f"Sending Verfication Email to '{user.email}'"
+        )
+
         celery.send_task(
             "email.send",
             (
                 get_settings().MAIL_SENDER_NAME,
                 get_settings().MAIL_SENDER_EMAIL,
+                "User",
+                user.email,
+                subject,
+                body,
+            ),
+        )
+
+    @classmethod
+    def send_reset_password_email(cls, user: User):
+        subject = "Password Reset"
+        body = f"As per your request.\nYour new password is -> {user.password}"
+
+        print("Sending Password Reset Email")
+        celery.send_task(
+            "email.send",
+            (
+                get_settings().MAIL_SENDER_NAME,
+                get_settings().MAIL_SENDER_EMAIL,
+                "User",
                 user.email,
                 subject,
                 body,

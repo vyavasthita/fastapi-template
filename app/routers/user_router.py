@@ -7,6 +7,7 @@ from app.dependencies.auth_dependency import (
     ValidateToken,
     ValidateDuplicateUser,
     ValidatePassword,
+    ValidatePasswordReset,
 )
 from app.schemas.user_schema import (
     UserBase,
@@ -28,15 +29,13 @@ def create(
     user: Annotated[dict, Depends(ValidateDuplicateUser())],
     db: Session = Depends(get_db),
 ) -> UserRead:
-    user = UserService.create_user(user, db)
-    UserService.send_email(user)
-    return user
+    return UserService.create_user(user, db)
 
 
 @user_router.put(
     "/users/profile", tags=["profile"], response_model=UserProfileUpdateRead
 )
-def update(
+def update_profile(
     current_user: Annotated[dict, Depends(ValidateToken())],
     user_info: Annotated[UserProfileUpdate, Body()],
     db: Session = Depends(get_db),
@@ -47,11 +46,27 @@ def update(
 @user_router.put(
     "/users/profile/password", tags=["profile"], status_code=status.HTTP_204_NO_CONTENT
 )
-def update(
+def update_password(
     user_info: Annotated[dict, Depends(ValidatePassword())],
     db: Session = Depends(get_db),
 ) -> None:
-    return UserService.update_password(user_info.get('user'), user_info.get('password'), db)
+    return UserService.update_password(
+        user_info.get("user"), user_info.get("password"), db
+    )
+
+
+@user_router.put(
+    "/users/profile/reset_password",
+    tags=["profile"],
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def reset_password(
+    user: Annotated[dict, Depends(ValidatePasswordReset())],
+    db: Session = Depends(get_db),
+) -> None:
+    return UserService.reset_password(
+        user, db
+    )
 
 
 @user_router.get("/users/me", tags=["profile"], response_model=UserRead)

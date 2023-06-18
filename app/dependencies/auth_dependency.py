@@ -69,5 +69,15 @@ class ValidatePassword:
 
         if not AuthService.verify_password(user, user_info.existing_password):
             raise AuthException("Invalid Existing Password")
-        
-        return {'user': user, 'password': user_info.new_password}
+
+        return {"user": user, "password": user_info.new_password}
+
+
+class ValidatePasswordReset:
+    def __call__(
+        self,
+        user: Annotated[UserBase, Body()],
+        db: Annotated[Session, Depends(get_db)],
+    ):
+        ApiLogger.log_info(f"Verifying user with email '{user.email}'.")
+        return AuthService.verify_user(email=user.email, db=db)
