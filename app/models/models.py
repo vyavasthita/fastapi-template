@@ -24,3 +24,4 @@ class Profile(Base):
     first_name = Column(String(30), nullable=False)
     last_name = Column(String(30), nullable=False)
     age = Column(Integer)
+    address = Column(String(200))
