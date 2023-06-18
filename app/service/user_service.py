@@ -31,7 +31,7 @@ class UserService:
         if not new_user:
             raise DBException(f"Failed to create user with email {user.email}")
 
-        cls.send_user_registration_email(user=new_user)
+        cls.send_user_registration_email(user=new_user, password=response.result)
 
         return new_user
 
@@ -81,9 +81,9 @@ class UserService:
         cls.send_reset_password_email(user=user)
 
     @classmethod
-    def send_user_registration_email(cls, user: User):
+    def send_user_registration_email(cls, user: User, password: str):
         subject = "Please verify your email"
-        body = f"Thanks for registration.\nYour password is -> {user.password}"
+        body = f"Thanks for registration.\nYour password is -> {password}"
 
         ApiLogger.get_instance().log_info(
             f"Sending Verfication Email to '{user.email}'"
