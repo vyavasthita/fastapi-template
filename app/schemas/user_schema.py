@@ -73,7 +73,7 @@ class UserProfileUpdate(BaseModel):
     age: Annotated[int, Body(title="Age", description="Age of the user", ge=1)] = 1
 
 
-class UserProfilePasswordUpdate(BaseModel):
+class UserPasswordUpdate(BaseModel):
     existing_password: Annotated[
         str, Body(title="Existing Password", description="Existing Password")
     ]

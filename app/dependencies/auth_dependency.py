@@ -7,7 +7,7 @@ from app.dependencies.db_dependency import get_db
 from app.service.auth_service import AuthService
 from app.errors.auth_error import AuthException
 from app.logging.api_logger import ApiLogger
-from app.schemas.user_schema import UserBase, UserCreate, UserProfilePasswordUpdate
+from app.schemas.user_schema import UserBase, UserCreate, UserPasswordUpdate
 
 
 def get_auth_schema():
@@ -61,7 +61,7 @@ class ValidatePassword:
     def __call__(
         self,
         token: Annotated[str, Depends(get_auth_schema())],
-        user_info: Annotated[UserProfilePasswordUpdate, Body()],
+        user_info: Annotated[UserPasswordUpdate, Body()],
         db: Annotated[Session, Depends(get_db)],
     ):
         ApiLogger.log_info("Verifying token.")

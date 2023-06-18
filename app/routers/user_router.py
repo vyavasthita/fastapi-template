@@ -51,7 +51,7 @@ def update_profile(
 
 
 @user_router.put(
-    "/users/profile/password", tags=["profile"], status_code=status.HTTP_204_NO_CONTENT
+    "/users/password", tags=["profile"], status_code=status.HTTP_204_NO_CONTENT
 )
 def update_password(
     user_info: Annotated[dict, Depends(ValidatePassword())],
@@ -63,7 +63,7 @@ def update_password(
 
 
 @user_router.put(
-    "/users/profile/reset_password",
+    "/users/reset_password",
     tags=["profile"],
     status_code=status.HTTP_204_NO_CONTENT,
 )

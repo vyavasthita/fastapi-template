@@ -71,7 +71,7 @@ class UserService:
 
         dao.update_user_password(user, hashed_password, db)
 
-        cls.send_reset_password_email(user=user)
+        cls.send_reset_password_email(user=user, password=response.result)
 
     @classmethod
     def send_user_registration_email(cls, user: User):
@@ -95,9 +95,9 @@ class UserService:
         )
 
     @classmethod
-    def send_reset_password_email(cls, user: User):
+    def send_reset_password_email(cls, user: User, password: str):
         subject = "Password Reset"
-        body = f"As per your request.\nYour new password is -> {user.password}"
+        body = f"As per your request.\nYour new password is -> {password}"
 
         print("Sending Password Reset Email")
         celery.send_task(
@@ -105,7 +105,7 @@ class UserService:
             (
                 get_settings().MAIL_SENDER_NAME,
                 get_settings().MAIL_SENDER_EMAIL,
-                "User",
+                (user.first_name + " " + user.last_name),
                 user.email,
                 subject,
                 body,
@@ -123,7 +123,7 @@ class UserService:
             (
                 get_settings().MAIL_SENDER_NAME,
                 get_settings().MAIL_SENDER_EMAIL,
-                "User",
+                (user.first_name + " " + user.last_name),
                 user.email,
                 subject,
                 body,
