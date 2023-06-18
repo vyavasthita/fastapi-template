@@ -18,4 +18,5 @@ def decode_access_token(token: str, secret_key: str, algorithm: str) -> str:
     try:
         return jwt.decode(token, secret_key, algorithms=algorithm)
     except JWTError as error:
-        raise AuthException("Failed to create access token")
+        ApiLogger.log_error(f"Failed to decode access token. {str(error)}.")
+        raise AuthException("Token expired or invalid.")

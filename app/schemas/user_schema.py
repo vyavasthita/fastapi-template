@@ -1,6 +1,9 @@
-from pydantic import BaseModel, validator
+from typing import Annotated
+from pydantic import BaseModel, validator, root_validator
 from email_validator import validate_email, EmailNotValidError
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Body
+from app.errors.user_error import UserValidationException
+from app.dependencies.config_dependency import get_settings
 
 
 class UserBase(BaseModel):
@@ -20,7 +23,70 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserProfileUpdate(BaseModel):
+    first_name: Annotated[
+        str,
+        Body(
+            title="First Name",
+            description="First Name of the user",
+            min_length=2,
+            max_length=30,
+        ),
+    ]
+    last_name: Annotated[
+        str,
+        Body(
+            title="Last Name",
+            description="Last Name of the user",
+            min_length=2,
+            max_length=30,
+        ),
+    ]
+    age: Annotated[int, Body(title="Age", description="Age of the user", ge=1)] = 1
+
+
+class UserProfilePasswordUpdate(BaseModel):
+    existing_password: Annotated[
+        str, Body(title="Existing Password", description="Existing Password")
+    ]
+    new_password: Annotated[
+        str,
+        Body(
+            title="New Password",
+            description="New Password to be updated",
+            min_length=get_settings().PASSWORD_LENGTH,
+            max_length=25,
+        ),
+    ]
+    confirm_password: Annotated[
+        str,
+        Body(
+            title="Confirm New Password",
+            description="Confirm New Password",
+            min_length=get_settings().PASSWORD_LENGTH,
+            max_length=25,
+        ),
+    ]
+
+    @root_validator()
+    def verify_password_match(cls, values):
+        password = values.get("new_password")
+        confirm_password = values.get("confirm_password")
+
+        if password != confirm_password:
+            raise UserValidationException("The two passwords did not match.")
+
+        return values
+
+
 class UserRead(UserCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class UserProfileUpdateRead(UserBase, UserProfileUpdate):
     id: int
 
     class Config:

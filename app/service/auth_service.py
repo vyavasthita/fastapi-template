@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.db import dao
 from app.errors.auth_error import AuthException
 from app.models.models import User
-from app.utils.security import create_access_token
+from app.utils.security import create_access_token, decode_access_token
 from app.dependencies.config_dependency import get_settings
 from app.utils.password_helper import PasswordHash
 
@@ -25,6 +25,18 @@ class AuthService:
         )
 
     @classmethod
+    def decode_access_token(cls, token: str):
+        return decode_access_token(
+            token, get_settings().SECRET_KEY, get_settings().JWT_ALGORITHM
+        )
+
+    @classmethod
+    def get_current_user(cls, token: str, db: Session) -> User:
+        payload = cls.decode_access_token(token)
+
+        return cls.validate_token(payload, db)
+
+    @classmethod
     def validate_token(cls, data: dict, db: Session) -> User:
         email = data.get("sub")
 
@@ -41,6 +53,10 @@ class AuthService:
             raise AuthException("User not found")
 
         return user
+
+    @classmethod
+    def check_user(cls, email: str, db: Session) -> User:
+        return dao.get_user_by_email(email=email, db=db)
 
     @classmethod
     def verify_password(cls, user: User, password: str) -> bool:

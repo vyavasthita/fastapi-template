@@ -4,12 +4,12 @@ from dataclasses import dataclass
 
 
 @dataclass
-class AuthException(Exception):
+class UserValidationException(Exception):
     message: str | None = None
 
 
-def auth_exception_handler(request: Request, exc: AuthException):
+def user_validation_exception_handler(request: Request, exc: UserValidationException):
     return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        status_code=status.HTTP_400_BAD_REQUEST,
         content={"message": exc.message},
     )
