@@ -1,4 +1,5 @@
-from pydantic import BaseSettings
+from typing import List, Union
+from pydantic import BaseSettings, validator, AnyHttpUrl
 import os
 
 
@@ -21,6 +22,17 @@ class DevSettings(BaseSettings):
     LOGS_DIR: str
     # Log File name
     LOG_FILE_NAME: str
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    ALLOW_METHODS: List[str] = ["*"]
+    ALLOW_HEADERS: List[str] = ["*"]
+
+    @validator("BACKEND_CORS_ORIGINS", pre=True)
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
+        if isinstance(v, str) and not v.startswith("["):
+            return [i.strip() for i in v.split(",")]
+        elif isinstance(v, (list, str)):
+            return v
+        raise ValueError(v)
 
     class Config:
         env_file = os.path.join(base_dir, ".env.dev")
@@ -42,6 +54,18 @@ class AutTestSettings(BaseSettings):
     LOGS_DIR: str
     # Log File name
     LOG_FILE_NAME: str
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    ALLOW_METHODS: List[str] = ["*"]
+    ALLOW_HEADERS: List[str] = ["*"]
+
+    @validator("BACKEND_CORS_ORIGINS", pre=True)  # 3
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
+        if isinstance(v, str) and not v.startswith("["):
+            return [i.strip() for i in v.split(",")]
+        elif isinstance(v, (list, str)):
+            return v
+
+        raise ValueError(v)
 
     class Config:
         env_file = os.path.join(base_dir, ".env.aut_test")
