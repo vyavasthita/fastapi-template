@@ -25,10 +25,11 @@ class UserService:
         return new_user
 
     @classmethod
-    def send_email(user: UserRead):
+    def send_email(cls, user: UserRead):
         subject = 'Please verify your email'
         body = f"Thanks for registration.\n Your password is -> {user.password}"
 
+        print("Sending Celery Tasks")
         celery.send_task(
             'email.send', (
                 settings.MAIL_SENDER_NAME,

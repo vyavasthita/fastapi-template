@@ -15,6 +15,12 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str
     MAIL_SENDER_NAME: str
     MAIL_SENDER_EMAIL: str
+    # Configuration file for logging
+    LOG_CONFIG_FILE: str
+    # Directory where logs will be generated.
+    LOGS_DIR: str
+    # Log File name
+    LOG_FILE_NAME: str
 
     class Config:
         env_file = os.path.join(base_dir, ".env.dev")

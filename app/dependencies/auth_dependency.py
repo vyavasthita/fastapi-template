@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.dependencies.db_dependency import get_db
 from app.service.auth_service import AuthService
 from app.errors.auth_error import AuthException
+from app.logging.api_logger import ApiLogger
 
 
 class UserAuthenticator:
@@ -12,8 +13,10 @@ class UserAuthenticator:
             self, form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
             db: Annotated[Session, Depends(get_db)]
         ):
+        ApiLogger.log_info(f"Verifying user with email '{form_data.username}'.")
         user = AuthService.verify_user(email=form_data.username, db=db)
 
+        ApiLogger.log_info(f"Verifying user has provided correct password.")
         if not AuthService.verify_password(user, form_data.password):
             raise AuthException("Invalid Password")
        

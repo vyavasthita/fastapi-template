@@ -19,4 +19,5 @@ def create(
     user = UserService.create_user(user, db)
     UserService.send_email(user)
     return user
+
     
