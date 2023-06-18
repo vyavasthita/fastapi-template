@@ -19,29 +19,29 @@ class AuthService:
             expiry_time = datetime.utcnow() + timedelta(minutes=15)
 
         return create_access_token(
-            dict(sub=email, exp=expiry_time), 
-            get_settings().SECRET_KEY, 
-            algorithm=get_settings().JWT_ALGORITHM
+            dict(sub=email, exp=expiry_time),
+            get_settings().SECRET_KEY,
+            algorithm=get_settings().JWT_ALGORITHM,
         )
 
     @classmethod
     def validate_token(cls, data: dict, db: Session) -> User:
-        email = data.get('sub')
+        email = data.get("sub")
 
         if not email:
             raise AuthException("Invalid Token")
-        
+
         return cls.verify_user(email=email, db=db)
-    
+
     @classmethod
-    def verify_user(cls, email: str, db: Session) -> User:        
+    def verify_user(cls, email: str, db: Session) -> User:
         user = dao.get_user_by_email(email=email, db=db)
 
         if not user:
             raise AuthException("User not found")
-        
+
         return user
-    
+
     @classmethod
     def verify_password(cls, user: User, password: str) -> bool:
         return PasswordHash.verify_password(password, user.password)

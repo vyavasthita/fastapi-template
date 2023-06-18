@@ -19,10 +19,12 @@ app.add_exception_handler(AuthException, auth_exception_handler)
 app.include_router(user_router)
 app.include_router(auth_router)
 
+
 def create_log_directory():
     base_dir = os.path.abspath(os.path.dirname(__name__))
 
     if not os.path.exists(os.path.join(base_dir, get_settings().LOGS_DIR)):
         os.mkdir(os.path.join(base_dir, get_settings().LOGS_DIR))
+
 
 create_log_directory()

@@ -10,22 +10,20 @@ from app.logging.api_logger import ApiLogger
 
 
 def get_auth_schema():
-    return OAuth2PasswordBearer(tokenUrl='/api/auth/login')
+    return OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
 class UserAuthenticator:
     def __call__(
-            self, form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
-            db: Annotated[Session, Depends(get_db)]
-        ):
+        self,
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        db: Annotated[Session, Depends(get_db)],
+    ):
         ApiLogger.log_info(f"Verifying user with email '{form_data.username}'.")
         user = AuthService.verify_user(email=form_data.username, db=db)
 
         ApiLogger.log_info(f"Verifying user has provided correct password.")
         if not AuthService.verify_password(user, form_data.password):
             raise AuthException("Invalid Password")
-       
-        return {
-            'email': form_data.username, 
-            'password': form_data.password
-        }
+
+        return {"email": form_data.username, "password": form_data.password}

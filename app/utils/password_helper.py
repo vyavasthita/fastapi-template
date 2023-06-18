@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 import random
 import string
 from app.utils.response import Response
-    
+
 
 class PasswordGenerator:
     lower = string.ascii_lowercase
@@ -19,17 +19,16 @@ class PasswordGenerator:
             password = "".join(random.sample(all, length))
         except Exception as err:
             return Response(
-                is_success=False, 
-                message="Failed to generate password. {}".format(str(err))
+                is_success=False,
+                message="Failed to generate password. {}".format(str(err)),
             )
 
-        return Response(
-            result=password
-        )
+        return Response(result=password)
+
 
 class PasswordHash:
     pwd_context: str = CryptContext(schemes=["bcrypt"], deprecated="auto")
-        
+
     @classmethod
     def gen_hash_password(cls, password) -> str:
         return cls.pwd_context.hash(password)

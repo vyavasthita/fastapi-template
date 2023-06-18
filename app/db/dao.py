@@ -10,5 +10,6 @@ def create_user(user: UserCreate, db: Session) -> User:
     db.refresh(new_user)
     return new_user
 
+
 def get_user_by_email(email: str, db: Session) -> User:
-    return db.query(User).filter_by(email = email).first()
+    return db.query(User).filter_by(email=email).first()

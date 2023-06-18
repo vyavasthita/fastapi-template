@@ -7,9 +7,9 @@ from app.dependencies.config_dependency import get_settings
 class ApiLogger:
     __instance = None
 
-    @staticmethod 
+    @staticmethod
     def get_instance():
-        """ Static access method. """
+        """Static access method."""
         if ApiLogger.__instance is None:
             ApiLogger()
 
@@ -22,14 +22,18 @@ class ApiLogger:
             ApiLogger.__instance = self
 
             self.initialize_logging()
-            
+
             self.logger = logging.getLogger(__name__)
-    
+
     def initialize_logging(self):
         logging.config.fileConfig(
-            fname=get_settings().LOG_CONFIG_FILE, 
-            disable_existing_loggers=False, 
-            defaults={'log_file_name' : os.path.join(get_settings().LOGS_DIR, get_settings().LOG_FILE_NAME)}
+            fname=get_settings().LOG_CONFIG_FILE,
+            disable_existing_loggers=False,
+            defaults={
+                "log_file_name": os.path.join(
+                    get_settings().LOGS_DIR, get_settings().LOG_FILE_NAME
+                )
+            },
         )
 
     @staticmethod
@@ -41,7 +45,7 @@ class ApiLogger:
         ApiLogger.get_instance().logger.info(log_message)
 
     @staticmethod
-    def log_warning(log_message):            
+    def log_warning(log_message):
         ApiLogger.get_instance().logger.warn(log_message)
 
     @staticmethod

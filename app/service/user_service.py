@@ -13,7 +13,7 @@ class UserService:
         response = PasswordGenerator().generate_password(get_settings().PASSWORD_LENGTH)
 
         print(f"*** Password -> {response.result}")
-        
+
         hashed_password = PasswordHash.gen_hash_password(response.result)
 
         user_create = UserCreate(email=user.email, password=hashed_password)
@@ -21,21 +21,22 @@ class UserService:
 
         if not new_user:
             raise DBException(f"Failed to create user with email {user.email}")
-        
+
         return new_user
 
     @classmethod
     def send_email(cls, user: UserRead):
-        subject = 'Please verify your email'
+        subject = "Please verify your email"
         body = f"Thanks for registration.\n Your password is -> {user.password}"
 
         print("Sending Celery Tasks")
         celery.send_task(
-            'email.send', (
+            "email.send",
+            (
                 get_settings().MAIL_SENDER_NAME,
                 get_settings().MAIL_SENDER_EMAIL,
-                user.email, 
-                subject, 
-                body
-            )
+                user.email,
+                subject,
+                body,
+            ),
         )

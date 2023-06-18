@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
     email = Column(String(60), index=True, unique=True, nullable=False)
@@ -18,10 +18,9 @@ class User(Base):
 
 
 class Profile(Base):
-    __tablename__ = 'profiles'
+    __tablename__ = "profiles"
 
     id = Column(Integer, primary_key=True)
     first_name = Column(String(30), nullable=False)
     last_name = Column(String(30), nullable=False)
     age = Column(Integer)
-

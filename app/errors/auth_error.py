@@ -11,5 +11,5 @@ class AuthException(Exception):
 def auth_exception_handler(request: Request, exc: AuthException):
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"message": exc.message}
+        content={"message": exc.message},
     )

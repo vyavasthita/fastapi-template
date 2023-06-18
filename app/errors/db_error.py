@@ -11,5 +11,5 @@ class DBException(HTTPException):
 def db_exception_handler(request: Request, exc: DBException):
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"message": exc.message}
+        content={"message": exc.message},
     )
