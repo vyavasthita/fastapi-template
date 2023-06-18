@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.dependencies.auth_dependency import UserAuthenticator
 from app.schemas.auth_schema import Token
 from app.service.auth_service import AuthService
-from app.config.config import settings
+from app.dependencies.config_dependency import get_settings
 
 
 auth_router = APIRouter(
@@ -15,6 +15,6 @@ auth_router = APIRouter(
 def token(
     user: Annotated[dict, Depends(UserAuthenticator())]
 ) -> Token:
-    access_token = AuthService.create_access_token(user.get('email'), settings.TOKEN_EXPIRY_TIME)
+    access_token = AuthService.create_access_token(user.get('email'), get_settings().TOKEN_EXPIRY_TIME)
 
     return {"access_token": access_token, "token_type": "bearer"}

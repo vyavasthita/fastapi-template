@@ -24,5 +24,3 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = os.path.join(base_dir, ".env.dev")
-
-settings = Settings()

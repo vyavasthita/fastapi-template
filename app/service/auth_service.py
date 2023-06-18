@@ -4,8 +4,9 @@ from app.db import dao
 from app.errors.auth_error import AuthException
 from app.models.models import User
 from app.utils.security import create_access_token
-from app.config.config import settings
+from app.dependencies.config_dependency import get_settings
 from app.utils.password_helper import PasswordHash
+
 
 class AuthService:
     @classmethod
@@ -19,8 +20,8 @@ class AuthService:
 
         return create_access_token(
             dict(sub=email, exp=expiry_time), 
-            settings.SECRET_KEY, 
-            algorithm=settings.JWT_ALGORITHM
+            get_settings().SECRET_KEY, 
+            algorithm=get_settings().JWT_ALGORITHM
         )
 
     @classmethod

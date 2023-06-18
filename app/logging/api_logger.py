@@ -1,7 +1,7 @@
 import os
 import logging
 import logging.config
-from app.config.config import settings
+from app.dependencies.config_dependency import get_settings
 
 
 class ApiLogger:
@@ -27,9 +27,9 @@ class ApiLogger:
     
     def initialize_logging(self):
         logging.config.fileConfig(
-            fname=settings.LOG_CONFIG_FILE, 
+            fname=get_settings().LOG_CONFIG_FILE, 
             disable_existing_loggers=False, 
-            defaults={'log_file_name' : os.path.join(settings.LOGS_DIR, settings.LOG_FILE_NAME)}
+            defaults={'log_file_name' : os.path.join(get_settings().LOGS_DIR, get_settings().LOG_FILE_NAME)}
         )
 
     @staticmethod

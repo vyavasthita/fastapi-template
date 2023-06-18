@@ -1,6 +1,6 @@
 from celery import Celery
-from app.config.config import settings
+from app.dependencies.config_dependency import get_settings
 
 
-celery = Celery(__name__, broker=settings.CELERY_BROKER_URL, 
-                result_backend=settings.CELERY_RESULT_BACKEND)
+celery = Celery(__name__, broker=get_settings().CELERY_BROKER_URL, 
+                result_backend=get_settings().CELERY_RESULT_BACKEND)
