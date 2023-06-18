@@ -1,10 +1,7 @@
-from fastapi.security import OAuth2PasswordBearer
+
 from jose import jwt, JWTError
 from app.errors.auth_error import AuthException
 from app.logging.api_logger import ApiLogger
-
-
-oauth2_schema = OAuth2PasswordBearer(tokenUrl='/api/auth/login')
 
 
 def create_access_token(data: dict, secret_key: str, algorithm: str) -> str:

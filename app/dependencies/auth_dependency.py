@@ -1,11 +1,16 @@
 from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordBearer
 from fastapi.security import OAuth2PasswordRequestForm
 from app.dependencies.db_dependency import get_db
 from app.service.auth_service import AuthService
 from app.errors.auth_error import AuthException
 from app.logging.api_logger import ApiLogger
+
+
+def get_auth_schema():
+    return OAuth2PasswordBearer(tokenUrl='/api/auth/login')
 
 
 class UserAuthenticator:

@@ -15,6 +15,9 @@ auth_router = APIRouter(
 def token(
     user: Annotated[dict, Depends(UserAuthenticator())]
 ) -> Token:
-    access_token = AuthService.create_access_token(user.get('email'), get_settings().TOKEN_EXPIRY_TIME)
+    access_token = AuthService.create_access_token(
+        user.get('email'), 
+        get_settings().TOKEN_EXPIRY_TIME
+    )
 
     return {"access_token": access_token, "token_type": "bearer"}
