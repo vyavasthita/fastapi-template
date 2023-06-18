@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from app.schemas.user_schema import (
     UserBase,
     UserRead,
-    UserCreate,
     UserProfileUpdate,
     UserProfileUpdateRead,
 )
@@ -19,19 +18,13 @@ from app.logging.api_logger import ApiLogger
 class UserService:
     @classmethod
     def create_user(cls, user: UserBase, db: Session) -> UserRead:
-        response = PasswordGenerator().generate_password(get_settings().PASSWORD_LENGTH)
-
-        ApiLogger.get_instance().log_info(f"*** Password -> {response.result}")
-
-        hashed_password = PasswordHash.gen_hash_password(response.result)
-
-        user_create = UserCreate(email=user.email, password=hashed_password)
-        new_user = dao.create_user(user_create, db)
+        user.password = PasswordHash.gen_hash_password(user.password)
+        new_user = dao.create_user(user, db)
 
         if not new_user:
             raise DBException(f"Failed to create user with email {user.email}")
 
-        cls.send_user_registration_email(user=new_user, password=response.result)
+        cls.send_user_registration_email(user=new_user)
 
         return new_user
 
@@ -81,9 +74,9 @@ class UserService:
         cls.send_reset_password_email(user=user)
 
     @classmethod
-    def send_user_registration_email(cls, user: User, password: str):
+    def send_user_registration_email(cls, user: User):
         subject = "Please verify your email"
-        body = f"Thanks for registration.\nYour password is -> {password}"
+        body = f"Thanks for registration."
 
         ApiLogger.get_instance().log_info(
             f"Sending Verfication Email to '{user.email}'"
@@ -94,7 +87,7 @@ class UserService:
             (
                 get_settings().MAIL_SENDER_NAME,
                 get_settings().MAIL_SENDER_EMAIL,
-                "User",
+                (user.first_name + " " + user.last_name),
                 user.email,
                 subject,
                 body,

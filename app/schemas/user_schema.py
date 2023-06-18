@@ -7,7 +7,7 @@ from app.dependencies.config_dependency import get_settings
 
 
 class UserBase(BaseModel):
-    email: str
+    email: str = Body(title="Email Address")
 
     @validator("email")
     def validate_email(cls, email_address):
@@ -17,13 +17,8 @@ class UserBase(BaseModel):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
         return email_address
-
-
-class UserCreate(UserBase):
-    password: str
-
-
-class UserProfileUpdate(BaseModel):
+    
+class UserName(UserBase):
     first_name: Annotated[
         str,
         Body(
@@ -42,6 +37,39 @@ class UserProfileUpdate(BaseModel):
             max_length=30,
         ),
     ]
+
+
+class UserCreate(UserName):
+    password: Annotated[
+        str,
+        Body(
+            title="Password",
+            description="Password of the user",
+            min_length=get_settings().PASSWORD_LENGTH,
+            max_length=25,
+        ),
+    ]
+    confirm_password: Annotated[
+        str,
+        Body(
+            title="Confirm Password",
+            description="Confirm New Password",
+            min_length=get_settings().PASSWORD_LENGTH,
+            max_length=25,
+        ),
+    ]
+
+    @root_validator()
+    def verify_password_match(cls, values):
+        password = values.get("password")
+        confirm_password = values.get("confirm_password")
+
+        if password != confirm_password:
+            raise UserValidationException("The passwords did not match.")
+
+        return values
+
+class UserProfileUpdate(BaseModel):
     age: Annotated[int, Body(title="Age", description="Age of the user", ge=1)] = 1
 
 
@@ -79,7 +107,7 @@ class UserProfilePasswordUpdate(BaseModel):
         return values
 
 
-class UserRead(UserCreate):
+class UserRead(UserName):
     id: int
 
     class Config:

@@ -7,7 +7,7 @@ from app.dependencies.db_dependency import get_db
 from app.service.auth_service import AuthService
 from app.errors.auth_error import AuthException
 from app.logging.api_logger import ApiLogger
-from app.schemas.user_schema import UserBase, UserProfilePasswordUpdate
+from app.schemas.user_schema import UserBase, UserCreate, UserProfilePasswordUpdate
 
 
 def get_auth_schema():
@@ -17,7 +17,7 @@ def get_auth_schema():
 class ValidateDuplicateUser:
     def __call__(
         self,
-        user: Annotated[UserBase, Body()],
+        user: Annotated[UserCreate, Body()],
         db: Annotated[Session, Depends(get_db)],
     ):
         ApiLogger.log_info(f"Verifying user with email '{user.email}'.")
