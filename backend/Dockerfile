@@ -1,28 +1,15 @@
-FROM python:3.10.12-alpine3.18 as requirements-stage
+FROM diliplakshya/python3.10.12-alpine3.18-poetry as requirements-stage
 
 WORKDIR /tmp
-
-RUN pip install poetry
 
 COPY pyproject.toml /tmp
 COPY poetry.lock* /tmp
 
 RUN poetry export -f requirements.txt --only core --only dev --only aut-test --output requirements.txt --without-hashes
 
-FROM python:3.10.12-alpine3.18
-
-RUN apk update \
-    && apk add --virtual build-deps gcc python3-dev musl-dev \
-    && apk add --no-cache mariadb-dev
+FROM diliplakshya/python3.10.12-alpine3.18-poetry-mysql-dev
 
 WORKDIR /app
-
-# set environment variables
-# Prevents Python from writing pyc files to disc (equivalent to python -B option)
-ENV PYTHONDONTWRITEBYTECODE 1
-
-# Prevents Python from buffering stdout and stderr (equivalent to python -u option)
-ENV PYTHONUNBUFFERED 1
 
 # Expose the port 5001 in which our application runs
 EXPOSE 5001
