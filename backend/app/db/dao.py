@@ -29,27 +29,30 @@ def get_user_by_email(email: str, db: Session) -> User:
     return db.query(User).filter_by(email=email).first()
 
 
+def get_user_by_id(user_id: int, db: Session) -> User:
+    return db.query(User).get(user_id)
+
+
 def update_user_profile(
     user: User, user_info: UserProfileUpdate, db: Session
 ) -> UserProfileUpdateRead:
+    user.first_name = user_info.first_name
+    user.last_name = user_info.last_name
+
     profile = db.query(Profile).filter(Profile.userprofile_id == user.id).first()
 
     if profile:  # record already exists
         # Update the record
-        profile.first_name = user_info.first_name
-        profile.last_name = user_info.last_name
         profile.age = user_info.age
     else:  # new record
-        profile = Profile(
-            first_name=user_info.first_name,
-            last_name=user_info.last_name,
-            age=user_info.age,
-            user=user.id,
-        )
+        profile = Profile(age=user_info.age, user=user.id)
 
     db.add(profile)
+    db.add(user)
     db.commit()
+    db.refresh(user)
     db.refresh(profile)
+
     return user
 
 

@@ -17,8 +17,9 @@ class UserBase(BaseModel):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
         return email_address
-    
-class UserName(UserBase):
+
+
+class UserName(BaseModel):
     first_name: Annotated[
         str,
         Body(
@@ -39,7 +40,7 @@ class UserName(UserBase):
     ]
 
 
-class UserCreate(UserName):
+class UserCreate(UserBase, UserName):
     password: Annotated[
         str,
         Body(
@@ -69,8 +70,9 @@ class UserCreate(UserName):
 
         return values
 
-class UserProfileUpdate(BaseModel):
-    age: Annotated[int, Body(title="Age", description="Age of the user", ge=1)] = 1
+
+class UserProfileUpdate(UserName):
+    age: Annotated[int | None, Body(title="Age", description="Age of the user", ge=1)]
 
 
 class UserPasswordUpdate(BaseModel):
@@ -107,7 +109,7 @@ class UserPasswordUpdate(BaseModel):
         return values
 
 
-class UserRead(UserName):
+class UserRead(UserBase, UserName):
     id: int
 
     class Config:

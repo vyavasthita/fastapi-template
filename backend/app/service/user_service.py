@@ -34,7 +34,7 @@ class UserService:
         cls.send_delete_account_email(user)
 
     @classmethod
-    def update_profile_info(
+    def update_profile(
         cls,
         current_user: User,
         user_info: UserProfileUpdate,

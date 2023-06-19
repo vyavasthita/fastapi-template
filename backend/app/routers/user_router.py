@@ -20,10 +20,10 @@ from app.service.auth_service import AuthService
 from app.models.models import User
 
 
-user_router = APIRouter(prefix="/api")
+user_router = APIRouter(prefix="/api", tags=["User"])
 
 
-@user_router.post("/users", tags=["user"], response_model=UserRead)
+@user_router.post("/users", response_model=UserRead)
 def create(
     user: Annotated[dict, Depends(ValidateDuplicateUser())],
     db: Session = Depends(get_db),
@@ -31,7 +31,7 @@ def create(
     return UserService.create_user(user, db)
 
 
-@user_router.delete("/users", tags=["user"], status_code=status.HTTP_204_NO_CONTENT)
+@user_router.delete("/users", status_code=status.HTTP_204_NO_CONTENT)
 def delete(
     user: Annotated[dict, Depends(ValidateDeleteAccount())],
     db: Session = Depends(get_db),
@@ -39,20 +39,16 @@ def delete(
     return UserService.delete_user(user, db)
 
 
-@user_router.put(
-    "/users/profile", tags=["profile"], response_model=UserProfileUpdateRead
-)
+@user_router.put("/users", response_model=UserProfileUpdateRead)
 def update_profile(
     current_user: Annotated[dict, Depends(ValidateToken())],
     user_info: Annotated[UserProfileUpdate, Body()],
     db: Session = Depends(get_db),
 ) -> UserProfileUpdateRead:
-    return UserService.update_profile_info(current_user, user_info, db)
+    return UserService.update_profile(current_user, user_info, db)
 
 
-@user_router.put(
-    "/users/password", tags=["profile"], status_code=status.HTTP_204_NO_CONTENT
-)
+@user_router.put("/users/password", status_code=status.HTTP_204_NO_CONTENT)
 def update_password(
     user_info: Annotated[dict, Depends(ValidatePassword())],
     db: Session = Depends(get_db),
@@ -64,7 +60,6 @@ def update_password(
 
 @user_router.put(
     "/users/reset_password",
-    tags=["profile"],
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def reset_password(
@@ -74,7 +69,7 @@ def reset_password(
     return UserService.reset_password(user, db)
 
 
-@user_router.get("/users/me", tags=["profile"], response_model=UserRead)
+@user_router.get("/users/me", response_model=UserRead)
 def me(
     token: Annotated[str, Depends(get_auth_schema())], db: Session = Depends(get_db)
 ) -> UserRead:
