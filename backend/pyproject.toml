@@ -1,10 +1,9 @@
 [tool.poetry]
-name = "fastapi-template"
+name = "fastapi backend"
 version = "0.1.0"
-description = "Fast API template"
+description = "Backend Application written in FastApi. Its a template for all FastApi Application."
 authors = ["Dilip Kumar Sharma <diliplakshya@gmail.com>"]
 readme = "README.md"
-packages = [{include = "fastapi_template"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -19,14 +18,10 @@ passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = "^3.3.0"
 python-multipart = "^0.0.6"
 sqlalchemy = "^2.0.16"
-celery = "^5.3.0"
+celery = "^5.3.1"
 redis = "^4.5.5"
-alembic = "^1.11.1"
-
-
-[tool.poetry.group.dev.dependencies]
 gunicorn = "^20.1.0"
-black = "^23.3.0"
+alembic = "^1.11.1"
 
 [build-system]
 requires = ["poetry-core"]

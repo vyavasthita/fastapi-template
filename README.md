@@ -31,6 +31,9 @@ sudo apt install redis-server
 - gunicorn
 - alembic
 
+Dev Env;-
+- black
+
 # Webserver
 gunicorn + uvicorn
 
