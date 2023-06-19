@@ -7,7 +7,8 @@ base_dir: str = os.path.abspath(os.path.dirname(__name__))
 
 
 class DevSettings(BaseSettings):
-    SQLALCHEMY_URL: str | None
+    DB_TYPE: str | None = "SQLITE"
+    SQLITE_URL: str | None
     JWT_ALGORITHM: str | None
     TOKEN_EXPIRY_TIME: int | None
     SECRET_KEY: str | None
@@ -25,6 +26,11 @@ class DevSettings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
     ALLOW_METHODS: List[str] = ["*"]
     ALLOW_HEADERS: List[str] = ["*"]
+
+    MYSQL_USER: str
+    MYSQL_HOST: str
+    MYSQL_DB: str
+    MYSQL_PORT: str
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
@@ -39,7 +45,8 @@ class DevSettings(BaseSettings):
 
 
 class AutTestSettings(BaseSettings):
-    SQLALCHEMY_URL: str | None
+    DB_TYPE: str | None = "SQLITE"
+    SQLITE_URL: str | None
     JWT_ALGORITHM: str | None
     TOKEN_EXPIRY_TIME: int | None
     SECRET_KEY: str | None
@@ -57,6 +64,11 @@ class AutTestSettings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
     ALLOW_METHODS: List[str] = ["*"]
     ALLOW_HEADERS: List[str] = ["*"]
+
+    MYSQL_USER: str
+    MYSQL_HOST: str
+    MYSQL_DB: str
+    MYSQL_PORT: str
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)  # 3
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:

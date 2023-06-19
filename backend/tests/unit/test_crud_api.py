@@ -22,7 +22,7 @@ def test_create_user():
     assert response.status_code == status.HTTP_201_CREATED
 
     assert response.json() == {
-        "first_name": "dili",
+        "first_name": "dilip",
         "last_name": "sharma",
         "email": "temp@gmail.com",
     }

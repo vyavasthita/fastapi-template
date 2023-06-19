@@ -199,6 +199,7 @@ poetry config virtualenvs.path /home/raja/Documents/source_code/poetry-envs --lo
 Note: Here --local means it is applicable to current project only otherwise this would be a global setting
 ## How to Test
 
+# Option 1 (Without Docker and With Sqlite DB)
 1. Clone the repo
     git clone --recursive git@github.com:vyavasthita/fastapi-template.git
 
@@ -271,3 +272,52 @@ Note: Here --local means it is applicable to current project only otherwise this
     http://127.0.0.1:5001/docs
 
 7. You can execute the endpoints.
+
+8. To Run unit tests
+    Open another shell and run below command.
+
+    poetry run pytest -v
+
+9. To Run unit tests coverage
+
+    Open another shell and run below command.
+    poetry run pytest --cov
+
+# Option 2 (With Docker and With MySql DB)
+Prerequisites; -
+
+Docker and Docker compose must be installed.
+
+1. Update below environment variables by pointing to docker container
+    Do this for ./backend/.env.dev
+    and ./celery-worker-template/.env.dev
+
+    CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+    CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+2. Go to root directory
+    Run following command
+
+    make
+
+    This will start 6 docker containers. 
+    a) rabbitmq
+    b) redis
+    c) MySql DB 
+    d) Phpmyadmin
+    e) backend
+    f) worker
+
+3. To access MySql db, use phpmyadmin. URL: http://127.0.0.1:8080
+    database: apptemplate
+
+4. To Run unit tests
+    make
+    make test
+
+5. To Run unit tests coverage
+    make
+    make cov
+
+6. To stop the containers
+    make stop
