@@ -1,0 +1,3 @@
+[submodule "celery-worker-template"]
+	path = celery-worker-template
+	url = git@github.com:vyavasthita/celery-worker-template.git
