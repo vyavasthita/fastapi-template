@@ -27,6 +27,11 @@ alembic = "^1.11.1"
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
 
+
+[tool.poetry.group.aut-test.dependencies]
+httpx = "^0.24.1"
+pytest = "^7.3.2"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 from fastapi import APIRouter, Body, Depends, status
 from sqlalchemy.orm import Session
 from app.dependencies.db_dependency import get_db
@@ -23,11 +23,16 @@ from app.models.models import User
 user_router = APIRouter(prefix="/api", tags=["User"])
 
 
-@user_router.post("/users", response_model=UserRead)
+@user_router.post(
+    "/users",
+    response_model=UserRead,
+    response_model_exclude={"id"},
+    status_code=status.HTTP_201_CREATED,
+)
 def create(
     user: Annotated[dict, Depends(ValidateDuplicateUser())],
     db: Session = Depends(get_db),
-) -> UserRead:
+) -> Any:
     return UserService.create_user(user, db)
 
 

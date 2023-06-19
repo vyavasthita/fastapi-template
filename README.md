@@ -50,6 +50,10 @@ FastAPI template
 Dev Env;-
 - black
 
+Auto Test Env
+- httpx
+- pytest
+
 # Webserver
 gunicorn + uvicorn
 
