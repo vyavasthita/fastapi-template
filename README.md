@@ -1,4 +1,4 @@
-# indian-insurance
+# About
 FastAPI template
 
 # Python Version
@@ -12,10 +12,26 @@ FastAPI template
 
 # Prerequisites
 
-sudo apt update && sudo apt upgrade
-sudo apt-get install rabbitmq-server
+1. RabbitMQ
+    It is the message broker for our celery producer
 
-sudo apt install redis-server
+    sudo apt update && sudo apt upgrade
+    sudo apt-get install rabbitmq-server
+
+2. Redis
+
+    It is our result backend for our celery producer
+
+    sudo apt install redis-server
+
+3. Poetry
+
+    It is our Python Packaging and Dependency Management tool.
+
+    Install it by following below official document.
+
+    https://python-poetry.org/docs/
+
 
 # Python Packages Used
 - fastapi
@@ -172,7 +188,82 @@ TBD
 - HTTP_422_UNPROCESSABLE_ENTITY = 422
 - HTTP_500_INTERNAL_SERVER_ERROR = 500
 
+# Poetry
+To install virtual env in sepecific path
+poetry config virtualenvs.path /home/raja/Documents/source_code/poetry-envs --local
+
+Note: Here --local means it is applicable to current project only otherwise this would be a global setting
 ## How to Test
 
 1. Clone the repo
+    git clone --recursive git@github.com:vyavasthita/fastapi-template.git
+
 2. Go to root directory 'fastapi-template'.
+    cd fastapi-template
+
+3. Duplicate the current shell with another 'fastapi-template'
+    First shell, we will configure our main application.
+    In Second shell, we will configure our main fastapi application.
+
+4. In First shell do following;-
+    Here we will run our fast api application
+
+    a). Go to directory 'backend'.
+        cd backend
+
+    b). Configure poetry virtual env path (optional)
+        By default poetry virtual environment path is '/home/<user>/.cache/pypoetry/virtualenvs'
+
+        If you want to change this path then follow below steps, else ignore.
+
+        poetry config virtualenvs.path <some-existing-path> --local
+
+        Note: Here --local means it is applicable to current project only otherwise this would be a global setting
+
+    c). Install python packages using poetry
+        poetry install
+
+        This command will create a virtual environment and also install all packages from poetry.lock in this
+        virtual environment.
+
+    d). In current 'backend' directory you will find a file named '.env.sample'.
+        Copy this file as '.env.dev' for development use.
+
+        Update all configuration in '.env.dev' accordingly.
+
+    e). Start fastapi application with gunicorn
+        bash start_gunicorn.sh
+
+5. In Second shell do following;-
+    Here we will run our celery worker which is responding for sending emails.
+
+    a). Go to directory 'celery-worker-template'.
+        cd celery-worker-template
+
+    b). Configure poetry virtual env path (optional)
+        By default poetry virtual environment path is '/home/<user>/.cache/pypoetry/virtualenvs'
+
+        If you want to change this path then follow below steps, else ignore.
+
+        poetry config virtualenvs.path <some-existing-path> --local
+
+        Note: Here --local means it is applicable to current project only otherwise this would be a global setting
+
+    c). Install python packages using poetry
+        poetry install
+
+        This command will create a virtual environment and also install all packages from poetry.lock in this
+        virtual environment.
+
+    d). In current 'celery-worker-template' directory you will find a file named '.env.sample'.
+        Copy this file as '.env.dev' for development use.
+
+        Update all configuration in '.env.dev' accordingly.
+
+    e). Start celery worker application
+        bash start_worker.sh
+
+6. Open browser and open FastAPI's swagger documentation
+    http://127.0.0.1:5001/docs
+
+7. You can execute the endpoints.
