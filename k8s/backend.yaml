@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  replicas: 1
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: diliplakshya/fast-api-template
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "300m"
+          ports:
+            - containerPort: 5001
+              name: http
+          env:
+            # From configMap
+            - name: DB_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: DB_TYPE
+            - name: JWT_ALGORITHM
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: JWT_ALGORITHM
+            - name: TOKEN_EXPIRY_TIME
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: TOKEN_EXPIRY_TIME
+            - name: PASSWORD_LENGTH
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: PASSWORD_LENGTH
+            - name: CELERY_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: CELERY_BROKER_URL
+            - name: CELERY_RESULT_BACKEND
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: CELERY_RESULT_BACKEND
+            - name: LOG_CONFIG_FILE
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: LOG_CONFIG_FILE
+            - name: LOGS_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: LOGS_DIR
+            - name: LOG_FILE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: LOG_FILE_NAME
+            - name: MAIL_SENDER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: MAIL_SENDER_NAME
+            - name: MAIL_SENDER_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: MAIL_SENDER_EMAIL
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: MYSQL_HOST
+            - name: MYSQL_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: MYSQL_DB
+            - name: MYSQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: MYSQL_PORT
+            # From Secret
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: SECRET_KEY
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: MYSQL_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-lb-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: backend
+  ports:
+    - port: 5000
+      protocol: TCP
+      targetPort: 5001
+      name: http

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-admin-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mysql-admin
+  replicas: 1
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-admin
+    spec:
+      containers:
+        - name: mysql-admin
+          image: phpmyadmin:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "1048Mi"
+              cpu: "300m"
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+            # From configMap
+            - name: PMA_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-admin-configmap
+                  key: PMA_HOST
+            - name: PMA_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-admin-configmap
+                  key: PMA_USER
+            # From Secret
+            - name: PMA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-admin-secret
+                  key: PMA_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-admin-lb-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: mysql-admin
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 80
+      name: http

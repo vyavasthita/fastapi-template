@@ -31,6 +31,7 @@ class DevSettings(BaseSettings):
     MYSQL_HOST: str
     MYSQL_DB: str
     MYSQL_PORT: str
+    MYSQL_PASSWORD: str
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
@@ -69,6 +70,7 @@ class AutTestSettings(BaseSettings):
     MYSQL_HOST: str
     MYSQL_DB: str
     MYSQL_PORT: str
+    MYSQL_PASSWORD: str
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)  # 3
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:

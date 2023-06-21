@@ -11,11 +11,12 @@ if get_settings().DB_TYPE == "SQLITE":
 
     engine = create_engine(url=DATABASE_URL, connect_args={"check_same_thread": False})
 
-if get_settings().DB_TYPE == "MYSQL":
+elif get_settings().DB_TYPE == "MYSQL":
     DATABASE_URL = (
         "mysql://"
         + get_settings().MYSQL_USER
         + ":"
+        + get_settings().MYSQL_PASSWORD
         + "@"
         + get_settings().MYSQL_HOST
         + ":"
@@ -25,5 +26,6 @@ if get_settings().DB_TYPE == "MYSQL":
     )
 
     engine = create_engine(url=DATABASE_URL)
+
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)

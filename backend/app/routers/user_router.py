@@ -17,7 +17,6 @@ from app.schemas.user_schema import (
 )
 from app.service.user_service import UserService
 from app.service.auth_service import AuthService
-from app.models.models import User
 
 
 user_router = APIRouter(prefix="/api", tags=["User"])

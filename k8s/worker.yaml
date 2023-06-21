@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  selector:
+    matchLabels:
+      app: worker
+  replicas: 1
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: diliplakshya/celery-worker-template
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "300m"
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            # From configMap
+            - name: CELERY_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: worker-configmap
+                  key: CELERY_BROKER_URL
+            - name: CELERY_RESULT_BACKEND
+              valueFrom:
+                configMapKeyRef:
+                  name: worker-configmap
+                  key: CELERY_RESULT_BACKEND
+            - name: SMTP_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: worker-configmap
+                  key: SMTP_SERVER
+            - name: SMTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: worker-configmap
+                  key: SMTP_PORT
+            # From Secret
+            - name: SMTP_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: worker-secret
+                  key: SMTP_USER_NAME
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: worker-secret
+                  key: SMTP_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker-cip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: worker
+  ports:
+    - protocol: TCP
+      port: 8000
